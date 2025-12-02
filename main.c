@@ -55,17 +55,13 @@ void carregaDados()
 
     if (dadosAgenda == NULL)
     {
-        // Se o arquivo não existe, a agenda começa vazia.
         totalContatos = 0;
         printf("\n/!\\ Arquivo de dados nao encontrado. Iniciando agenda vazia.\n");
-        // Não precisa fechar, pois ele não foi aberto
         return; 
     }
 
     totalContatos = 0; 
-    
-    // Loop para ler dados do arquivo
-    // fscanf() retorna o número de itens lidos com sucesso (esperamos 2: Nome e Telefone)
+
     while (fscanf(dadosAgenda, "%s %s", tabelaDados[totalContatos][0], tabelaDados[totalContatos][1]) == 2)
     { 
         totalContatos++;
@@ -87,7 +83,7 @@ void carregaDados()
         }
         for (int i = 0; i < totalContatos; i++)
         {
-            fprintf(dadosAgenda, "%s %s\n", tabelaDados[i][0], tabelaDados[i][1]); // coloca todos os dados no arquivo e separa os campos por , (vira csv)
+            fprintf(dadosAgenda, "%s %s\n", tabelaDados[i][0], tabelaDados[i][1]); // coloca todos os dados no arquivo e separa os campos por espaço
         }
 
         fclose(dadosAgenda);

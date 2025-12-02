@@ -51,7 +51,7 @@ int main(void){
         for(int i=0; i<50; i++){
             printf("\n");   //limpa tela
         };
-        printf("fodase (edicao)");
+        printf("catapimbas! (edicao)");
     };
 
     void excluirContato(){

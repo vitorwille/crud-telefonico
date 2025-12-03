@@ -11,12 +11,6 @@
 // /!\ Perdao pelo excesso de comentarios. Criamos eles para ajudar a organizar o pensamento, facilitar a compreensao pelos colegas
 // e pelo professor, alem de servir como guia para que eu ache rapidamente as partes do codigo que mais passam por alteracao.
 
-/*
-    TODO:
-          - Implementar funcao de edicao (!!!)
-          - Embelezar menu para seguir a consistencia das outras telas
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> //tive que usar pra reorganizar os ids na hora da exclusao :( nao queria, mas precisei
@@ -130,7 +124,7 @@ void consultarLista()
     };
     printf("\n+---------------------------------------------------------------------------------------------+\n");
 
-    printf("\n\nPressione ENTER para voltar ao menu.");
+    printf("\nPressione ENTER para voltar ao menu.");
     getchar(); // espera o enter
 };
 
@@ -192,7 +186,7 @@ void cadastraContato()
         printf("\n| %-3i | %-40s | %-40s   |", idContato, tabelaDados[i][0], tabelaDados[i][1]);
     };
     printf("\n+---------------------------------------------------------------------------------------------+");
-    printf("\n\n[OK] Cadastro realizado com sucesso!\n\n");
+    printf("\n\n[OK] Cadastro realizado com sucesso!");
     printf("\nPressione ENTER para voltar ao menu.");
     getchar();
 };
@@ -200,7 +194,76 @@ void cadastraContato()
 void editarContato()
 {
     limparTela();
-    printf("catapimbas! (edicao)");
+    if (totalContatos == 0)
+    {
+        printf("\n\n/!\\ Nao ha contatos para editar. Voce deve efetuar um cadastro primeiro.");
+        printf("\nPressione ENTER para voltar ao menu.");
+        getchar();
+        return;
+    }
+
+    // impressao da tabela bonitinha
+    do
+    {
+        limparTela();
+        printf("+---------------------------------------------------------------------------------------------+");
+        printf("\n|                                       EDITAR CONTATO                                         |");
+        printf("\n+---------------------------------------------------------------------------------------------+");
+        printf("\n|                                                                                             |");
+        printf("\n| %-5s %-40s %-40s |", " ID ", "                  NOME", "                   TELEFONE                 ");
+        printf("\n|---------------------------------------------------------------------------------------------|");
+
+        for (int i = 0; i < totalContatos; i++)
+        {
+            printf("\n| %-3i | %-40s | %-40s   |", i + 1, tabelaDados[i][0], tabelaDados[i][1]);
+        }
+
+        printf("\n+---------------------------------------------------------------------------------------------+");
+        printf("\n\nDigite o ID do contato que deseja editar: ");
+        scanf("%i", &idEscolhido);
+        limparBuffer();
+
+    } while (idEscolhido <= 0 || idEscolhido > totalContatos);
+    limparTela();
+
+    int idParaEdit = idEscolhido-1;
+    printf("+---------------------------------------------------------------------------------------------+");
+    printf("\n|                                       EDITAR CONTATO                                       |");
+    printf("\n+---------------------------------------------------------------------------------------------+");
+
+    printf("\n\nNome atual: %s", tabelaDados[idParaEdit][0]);
+    printf("\nDigite o novo NOME (sem espacos): ");
+    scanf("%39s", tabelaDados[idParaEdit][0]);
+    limparBuffer();
+
+    int somenteNumero; // reciclagem de codigo
+    do
+    {
+        somenteNumero = 1;
+        printf("\nTelefone atual: %s", tabelaDados[idParaEdit][1]);
+        printf("\nDigite o novo TELEFONE (somente numeros): ");
+        scanf("%39s", tabelaDados[idParaEdit][1]);
+        limparBuffer();
+
+        int i = 0;
+        while (tabelaDados[idParaEdit][1][i] != '\0')
+        {
+            if (tabelaDados[idParaEdit][1][i] < '0' || tabelaDados[idParaEdit][1][i] > '9')
+            {
+                somenteNumero = 0;
+                break;
+            }
+            i++;
+        }
+
+    } while (somenteNumero == 0);
+
+    salvaDados();
+
+    printf("\n\n[OK] Contato editado com sucesso!");
+    printf("\nPressione ENTER para voltar ao menu.");
+    getchar();
+
 };
 
 void excluirContato()
@@ -209,7 +272,7 @@ void excluirContato()
     if (totalContatos == 0)
     {
         printf("\n/!\\ Nao ha contatos para excluir. Voce deve efetuar um cadastro primeiro.");
-        printf("\n\nPressione ENTER para voltar ao menu.");
+        printf("\nPressione ENTER para voltar ao menu.");
         getchar();
         return;
     }
@@ -250,7 +313,7 @@ void excluirContato()
     salvaDados();
 
     printf("\n\n[OK] Contato excluido com sucesso!\n");
-    printf("\n\nPressione ENTER para voltar ao menu.");
+    printf("\nPressione ENTER para voltar ao menu.");
     getchar();
 };
 

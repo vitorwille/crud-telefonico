@@ -86,11 +86,16 @@ void irMenu()
 {
     do
     {
-        printf("C.R.U.D. SIMPLES - AGENDA TELEFONICA\n\n");
-        printf("/!\\ Atencao: para visualizacao ideal, por favor, maximize a janela do seu terminal!\n\n");
-        printf("+--------------------------------+\n");
-        printf("                                 |\n[ 1 ] - Consultar lista          |\n[ 2 ] - Cadastrar contato        |\n[ 3 ] - Editar contato           |\n[ 4 ] - Excluir contato          |\n[ 5 ] - Sair da lista telefonica |\n                                 |\n");
-        printf("+--------------------------------+\n");
+        printf("\n+---------------------------------------------------------------------------------------------+\n");
+        printf("|                                        C.R.U.D SIMPLES                                      |");
+        printf("\n|                                       AGENDA TELEFONICA                                     |\n");
+        printf("|                                                                                             |\n");
+        printf("|   /!\\ Atencao: para visualizacao ideal, por favor, maximize a janela do seu terminal! /!\\   |\n");
+        printf("|---------------------------------------------------------------------------------------------|\n");
+        printf("|                                                                                             |\n");
+        printf("|  [ 1 ] - Consultar lista                                                                    |\n|  [ 2 ] - Cadastrar contato                                                                  |\n|  [ 3 ] - Editar contato                                                                     |\n|  [ 4 ] - Excluir contato                                                                    |\n|  [ 5 ] - Sair da lista telefonica                                                           |\n");
+        printf("|                                                                                             |\n");
+        printf("+---------------------------------------------------------------------------------------------+\n");
         printf(("\nEscolha a opcao desejada: "));
         scanf("%i", &escolhaMenu);
         limparBuffer();

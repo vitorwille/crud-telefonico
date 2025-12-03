@@ -1,21 +1,25 @@
 /*
     C.R.U.D. - Agenda telefonica (nome+contato)
 
-    Trabalho em grupos de 5 pessoas
+    Trabalho em grupos de ate 5 pessoas
     Professor Manfred Heil Junior
 
-    Alunos: Sarah Enaile Braga da Silva; Vitor Hugo Wille; TODO: Adicionar restante.
+    Alunos: Sarah Enaile Braga da Silva; Vitor Hugo Wille; Gabriel Nardes.
 
 */
 
+// /!\ Perdao pelo excesso de comentarios. Criamos eles para ajudar a organizar o pensamento, facilitar a compreensao pelos colegas
+// e pelo professor, alem de servir como guia para que eu ache rapidamente as partes do codigo que mais passam por alteracao.
+
 /*
-    TODO: - "Embelezar" o modulo de cadastro (atualmente ta bem feio)
-          - Implementar funçao de edicao
-          - Implementar funçao de exclusao
+    TODO:
+          - Implementar funcao de edicao (!!!)
+          - Embelezar menu para seguir a consistencia das outras telas
 */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> //tive que usar pra reorganizar os ids na hora da exclusao :( nao queria, mas precisei
 
 #define MAX_CONTATOS 100
 #define MAX_CARACTERES 40
@@ -24,16 +28,17 @@
 int escolhaMenu;
 char tabelaDados[100][2][40]; // 100 linhas, 2 colunas (nome e telefone), 40 caracteres cada campo
 int totalContatos = 0;
+int idContato, idEscolhido;
 
 void carregaDados()
 {
     // eh minha primeira vez lidando com salvamento/carregamento de arquivo - desculpe se tiver meio zuado, professor =)
-    FILE *dadosAgenda = fopen(ARQUIVO_DADOS, "r"); // define variavel e abre pra read-only
+    FILE *dadosAgenda = fopen(ARQUIVO_DADOS, "r"); // define variavel e abre pra leitura
 
     if (dadosAgenda == NULL)
     {
         totalContatos = 0;
-        printf("\n[DEBUG] Arquivo de dados nao encontrado. Iniciando agenda vazia.\n"); //atencao: pra essa mensagem aparecer, nao pode ter limpatela no main!
+        printf("\n[DEBUG] Arquivo de dados nao encontrado. Iniciando agenda vazia.\n"); // atencao: pra essa mensagem aparecer, nao pode ter limparTela(); na func. main!
         return 0;
     }
 
@@ -61,7 +66,7 @@ void salvaDados()
     }
     for (int i = 0; i < totalContatos; i++)
     {
-        fprintf(dadosAgenda, "%s %s\n", tabelaDados[i][0], tabelaDados[i][1]); // coloca todos os dados no arquivo e separa os campos por espaço
+        fprintf(dadosAgenda, "%s %s\n", tabelaDados[i][0], tabelaDados[i][1]); // coloca todos os dados no arquivo e separa os campos por espaco
     }
 
     fclose(dadosAgenda);
@@ -70,7 +75,7 @@ void salvaDados()
 void limparTela()
 {
 #ifdef _WIN32
-    system("cls"); // limpa cmd com tls se vc estiver usando windows
+    system("cls"); // limpa cmd com cls se vc estiver usando windows
 #else
     system("clear"); // limpa terminal do linux/mac
 #endif
@@ -79,7 +84,8 @@ void limparTela()
 void limparBuffer()
 {
     int c;
-    while ((c = getchar()) != '\n' && c != EOF); // limpa o buffer direito - esse eu tive que pesquisar no stackoverflow, minha nossa senhora, fflush tava dando cada b.o que me fez repensar minha existencia
+    while ((c = getchar()) != '\n' && c != EOF)
+        ; // limpa o buffer direito - esse eu tive que pesquisar no stackoverflow, minha nossa senhora, fflush tava dando tanta dor de cabeca que me fez repensar sobre minha existencia
 };
 
 void irMenu()
@@ -96,6 +102,7 @@ void irMenu()
         limparBuffer();
         if (escolhaMenu < 1 || escolhaMenu > 5)
         {
+            limparTela();
             printf("\n/!\\ OPCAO INVALIDA. Insira uma opcao novamente.\n\n");
         };
     } while (escolhaMenu < 1 || escolhaMenu > 5);
@@ -106,24 +113,25 @@ void consultarLista()
     limparTela();
 
     // impressao da tabela bonitinha
-    printf("+-------------------------------------------------------------------------------------+");
-    printf("\n|                                   CONSULTA DADOS                                    |");
-    printf("\n|                                                                                     |");
-    printf("\n| %-40s   %-40s |", "                  NOME", "                TELEFONE");
-    printf("\n|-------------------------------------------------------------------------------------|");
+    printf("+---------------------------------------------------------------------------------------------+");
+    printf("\n|                                        CONSULTA DADOS                                       |");
+    printf("\n|                                                                                             |");
+    printf("\n| %-5s %-40s %-40s |", " ID ", "                  NOME", "                   TELEFONE                 ");
+    printf("\n|---------------------------------------------------------------------------------------------|");
     if (totalContatos == 0)
     {
-        printf("\n\n", "A agenda esta vazia.");
+        printf("\n\n", "/!\\ A agenda esta vazia.");
     }
 
     for (int i = 0; i < totalContatos; i++)
     {
-        printf("\n| %-40s | %-40s |", tabelaDados[i][0], tabelaDados[i][1]);
+        idContato = i + 1;
+        printf("\n| %-3i | %-40s | %-40s   |", idContato, tabelaDados[i][0], tabelaDados[i][1]);
     };
-    printf("\n+-------------------------------------------------------------------------------------+\n");
+    printf("\n+---------------------------------------------------------------------------------------------+\n");
 
     printf("\n\nPressione ENTER para voltar ao menu.");
-    getchar(); // depois de bilhoes de horas gastas, eu aprendi a limpar buffer sem usar o fflush (ele tava bugando tudo
+    getchar(); // espera o enter
 };
 
 void cadastraContato()
@@ -132,23 +140,23 @@ void cadastraContato()
 
     int numContato = totalContatos;
     printf("/!\\ Atencao: Nao utilize espacos ao digitar nome ou telefone!\nUtilize hifen ('-') ou underline ('_') como alternativa.\n\nO maximo de letras/numero por campo e de 40 digitos.\n\n");
-    printf("+-------------------------------------------------------------------------------------+");
-    printf("\n|                                  CADASTRO DE CONTATO                                |");
-    printf("\n+-------------------------------------------------------------------------------------+");
+    printf("+---------------------------------------------------------------------------------------------+");
+    printf("\n|                                     CADASTRO DE CONTATO                                     |");
+    printf("\n+---------------------------------------------------------------------------------------------+");
     printf("\n\nDigite o NOME do contato (nao utilize espacos!): ");
-    scanf("%39s", tabelaDados[numContato][0]); // nome (ignora tudo que vier apos o 40o digito)
+    scanf("%39s", tabelaDados[numContato][0]); // nome (ignora tudo que vier apos o 39o digito)
     limparBuffer();
     int somenteNumero;
     do
     {
         somenteNumero = 1;
         printf("\n\nDigite o TELEFONE do contato (somente numeros): ");
-        scanf("%39s", tabelaDados[numContato][1]);
+        scanf("%39s", tabelaDados[numContato][1]); // telefone (ignora tudo que vier apos o 39o digito)
         limparBuffer();
         int i = 0;
         while (tabelaDados[numContato][1][i] != '\0') // ve se o campo nao ta vazio
         {
-            if (tabelaDados[numContato][1][i] < '0' || tabelaDados[numContato][1][i] > '9') // se nao conter numero...
+            if (tabelaDados[numContato][1][i] < '0' || tabelaDados[numContato][1][i] > '9') // gambiarra nao, adaptacao tecnica!
             {
                 somenteNumero = 0;
                 break;
@@ -157,7 +165,6 @@ void cadastraContato()
         }
     } while (somenteNumero == 0);
     limparTela();
-    printf("[OK] Cadastro realizado com sucesso!\n\n");
     if (totalContatos >= MAX_CONTATOS)
     {
         printf("\n/!\\ Voce atingiu o maximo de contatos. Exclua algum contato para realizar um novo cadastro.\n");
@@ -169,11 +176,11 @@ void cadastraContato()
     salvaDados();
 
     // impressao da tabela bonitinha
-    printf("+-------------------------------------------------------------------------------------+");
-    printf("\n|                            CONSULTA DADOS (POS CADASTRO)                            |");
-    printf("\n|                                                                                     |");
-    printf("\n| %-40s   %-40s |", "                  NOME", "                TELEFONE");
-    printf("\n|-------------------------------------------------------------------------------------|");
+    printf("+---------------------------------------------------------------------------------------------+");
+    printf("\n|                                CONSULTA DADOS (POS CADASTRO)                                |");
+    printf("\n|                                                                                             |");
+    printf("\n| %-5s %-40s %-40s |", " ID ", "                  NOME", "                   TELEFONE                 ");
+    printf("\n|---------------------------------------------------------------------------------------------|");
     for (int i = 0; i < 100; i++)
     {
         if (tabelaDados[i][0][0] == '\0') // \0 eh "vazio", se a matriz estiver vazia ele vai printar so o cabecalho e rodape
@@ -181,10 +188,12 @@ void cadastraContato()
             break;
         }
 
-        printf("\n| %-40s | %-40s |", tabelaDados[i][0], tabelaDados[i][1]);
+        idContato = i + 1;
+        printf("\n| %-3i | %-40s | %-40s   |", idContato, tabelaDados[i][0], tabelaDados[i][1]);
     };
-    printf("\n+-------------------------------------------------------------------------------------+");
-    printf("\n\nPressione ENTER para voltar ao menu.");
+    printf("\n+---------------------------------------------------------------------------------------------+");
+    printf("\n\n[OK] Cadastro realizado com sucesso!\n\n");
+    printf("\nPressione ENTER para voltar ao menu.");
     getchar();
 };
 
@@ -197,7 +206,52 @@ void editarContato()
 void excluirContato()
 {
     limparTela();
-    printf("vish (exclusao)");
+    if (totalContatos == 0)
+    {
+        printf("\n/!\\ Nao ha contatos para excluir. Voce deve efetuar um cadastro primeiro.");
+        printf("\n\nPressione ENTER para voltar ao menu.");
+        getchar();
+        return;
+    }
+
+    do
+    {
+        limparTela();
+        // impressao da tabela bonitinha
+        printf("+---------------------------------------------------------------------------------------------+");
+        printf("\n|                                     EXCLUSAO DE CONTATO                                     |");
+        printf("\n+---------------------------------------------------------------------------------------------+");
+        printf("\n|                                                                                             |");
+        printf("\n| %-5s %-40s %-40s |", " ID ", "                  NOME", "                   TELEFONE                 ");
+        printf("\n|---------------------------------------------------------------------------------------------|");
+        for (int i = 0; i < totalContatos; i++)
+        {
+            if (tabelaDados[i][0][0] == '\0') // \0 eh "vazio", se a matriz estiver vazia ele vai printar so o cabecalho e rodape
+            {
+                break;
+            }
+
+            idContato = i + 1;
+            printf("\n| %-3i | %-40s | %-40s   |", idContato, tabelaDados[i][0], tabelaDados[i][1]);
+        };
+        printf("\n+---------------------------------------------------------------------------------------------+");
+        printf("\n\n/!\\ ATENCAO: A exclusao de um contato NAO E REVERSIVEL! Certifique-se de inserir o ID correto!\nDigite o ID do contato a excluir: ");
+        scanf("%i", &idEscolhido);
+        limparBuffer();
+    } while (idEscolhido <= 0 || idEscolhido > totalContatos);
+
+    for (int i = idEscolhido - 1; i < totalContatos - 1; i++) // desloca todos os ids um numero pra tras, assim nao tem ordem bizarra (tipo 1,2,4,7)
+    {                                                         // se nao usar o -1 ele deleta o da frentekkkkkkkkkkkk descobri do pior jeito (perdi meia hora nisso
+        strcpy(tabelaDados[i][0], tabelaDados[i + 1][0]);
+        strcpy(tabelaDados[i][1], tabelaDados[i + 1][1]);
+    }
+    totalContatos--;
+
+    salvaDados();
+
+    printf("\n\n[OK] Contato excluido com sucesso!\n");
+    printf("\n\nPressione ENTER para voltar ao menu.");
+    getchar();
 };
 
 int main(void)
@@ -205,7 +259,7 @@ int main(void)
     carregaDados();
     while (1)
     {
-        limparTela();
+        limparTela(); // comente pra visualizar a mensagem de debug sobre o carregamento dos dados
         irMenu();
 
         switch (escolhaMenu)
